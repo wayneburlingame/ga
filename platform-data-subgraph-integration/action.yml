@@ -1,0 +1,53 @@
+name: Platform Data Subgraph Integration
+description: Perform different action to support integrating subgraphs into the platform data graph
+author: OneGraph team
+branding:
+  color: pink
+  icon: box
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Rover
+      shell: bash
+      run: |
+        curl -sSL https://rover.apollo.dev/nix/v0.2.0 | sh
+
+        # Add Rover to the $GITHUB_PATH so it can be used in another step
+        # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
+        echo "$HOME/.rover/bin" >> $GITHUB_PATH
+    - name: Run subgraph check
+      shell: bash
+      run: |
+        rover subgraph check ${{ inputs.graph-id }}@${{ inputs.graph-variant }} \
+          --schema ${{ inputs.schema-path }} \
+          --name ${{ inputs.subgraph-name }}
+    - name: Publish subgraph
+      shell: bash
+      # GA doesn't support conditions in composite actions
+      run: |
+        if [[ ${{ github.ref }} == ${{ github.event.repository.default_branch }} ]]
+        then
+          rover subgraph publish ${{ inputs.graph-id }}@${{ inputs.graph-variant }} \
+            --schema ${{ inputs.schema-path }} \
+            --name ${{ inputs.subgraph-name }}
+        fi
+inputs:
+  subgraph-name:
+    description: >
+      The name of the subgraph
+    required: true
+  schema-path:
+    description: >
+      Schema path
+    required: true
+  graph-id:
+    description: >
+      Graph ID
+    required: false
+    default: platform-data-graph
+  graph-variant:
+    description: >
+      Graph variant
+    required: false
+    default: main
