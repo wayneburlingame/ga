@@ -26,7 +26,7 @@ runs:
       shell: bash
       # GA doesn't support conditions in composite actions
       run: |
-        if [[ ${{ github.ref }} == ${{ github.event.repository.default_branch }} ]]
+        if [[ ${{ github.ref }} == refs/heads/${{ github.event.repository.default_branch }} ]]
         then
           rover subgraph publish ${{ inputs.graph-id }}@${{ inputs.graph-variant }} \
             --schema ${{ inputs.schema-path }} \
