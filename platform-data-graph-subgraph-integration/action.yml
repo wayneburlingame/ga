@@ -1,4 +1,4 @@
-name: Platform Data Subgraph Integration
+name: Platform Data Graph Subgraph Integration
 description: Perform different action to support integrating subgraphs into the platform data graph
 author: OneGraph team
 branding:
@@ -45,7 +45,7 @@ inputs:
     description: >
       Graph ID
     required: false
-    default: platform-data-graph
+    default: platform-data-graph-development
   graph-variant:
     description: >
       Graph variant
