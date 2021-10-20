@@ -19,6 +19,6 @@
   "homepage": "https://github.com/zendesk/hold-merges#readme",
   "dependencies": {
     "@actions/core": "^1.2.6",
-    "@actions/http-client": "^1.0.9"
+    "@actions/http-client": "^1.0.11"
   }
 }
