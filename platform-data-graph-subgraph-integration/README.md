@@ -18,10 +18,11 @@ jobs:
       - name: <Your service name> subgraph schema integration
         uses: zendesk/ga/platform-data-subgraph-integration@v1
         env:
+          GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
           APOLLO_KEY: ${{ secrets.APOLLO_KEY }}
-        with:
-          subgraph-name: <your service subgraph name>
-          schema-path: <path to your>/federated-schema.graphql
+          SUBGRAPH_NAME: <your service subgraph name>
+          SUBGRAPH_ROUTING_URL: <your service subgraph routing url>
+          SUBGRAPH_SCHEMA_PATH: <path to your>/federated-schema.graphql
 ```
 
 The action will perform the following tasks, though the One-Graph team might introduce other actions in the future.
