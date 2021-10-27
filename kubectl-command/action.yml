@@ -1,0 +1,16 @@
+name: kubectl-command
+description: Run kubectl commands
+author: Ethan Post
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    - KUBECTL_VERSION=${{ inputs.version }}
+inputs:
+  kubeconfig:
+    description: 'base64 encoded .kube/config'
+    required: true
+  version:
+    description: 'kubectl version to use'
+    required: false
+    default: '1.22.2'
