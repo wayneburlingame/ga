@@ -14,8 +14,6 @@ runs:
         docker run \
           -e APOLLO_KEY \
           -e GITHUB_TOKEN \
-          -e SUBGRAPH_NAME \
-          -e SUBGRAPH_SCHEMA_PATH \
           -e SUBGRAPH_DEFAULT_BRANCH=${{ github.event.repository.default_branch }} \
           -e SUBGRAPH_REPOSITORY=${GITHUB_REPOSITORY} \
           -e SUBGRAPH_GIT_SHA=${GITHUB_SHA} \
