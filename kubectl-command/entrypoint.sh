@@ -3,6 +3,6 @@
 set -e
 
 mkdir -p ~/.kube
-echo $KUBECONFIG | base64 -d > ~/.kube/config
+echo $KUBE_CONFIG | base64 -d > ~/.kube/config
 
 kubectl "$@"

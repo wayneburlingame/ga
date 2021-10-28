@@ -6,6 +6,7 @@ runs:
   image: 'Dockerfile'
   env:
     KUBECTL_VERSION: ${{ inputs.version }}
+    KUBE_CONFIG: ${{ inputs.kubeconfig }}
 inputs:
   kubeconfig:
     description: 'base64 encoded .kube/config'
