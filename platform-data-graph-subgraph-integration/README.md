@@ -20,7 +20,12 @@ Then, add a step to your default workflow, or create a new one with the followin
 
 ```
 name: Platform Data Subgraph Integration
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'schema.graphql'
 
 jobs:
   main:
