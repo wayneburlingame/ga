@@ -10,8 +10,6 @@ RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/v${KUBEC
     mv kubectl /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl
 
-RUN apk add aws-cli
-
 COPY ./entrypoint.sh .
 
 RUN chmod +x ./entrypoint.sh
