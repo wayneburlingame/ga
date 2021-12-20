@@ -1,0 +1,8 @@
+articles:
+  - path: example.md
+    article_id: 1
+    title: Main
+    draft: false
+  - path: linked-example.md
+    article_id: 2
+    title: Linked

@@ -1,0 +1,24 @@
+name: ZendeskDev Docs
+description: Autpublishes markdown on Zendeskdev as HTML
+author: One Graph
+branding:
+  color: blue
+  icon: docs
+runs:
+  using: node16
+  main: action.js
+inputs:
+  config:
+    description: >
+      Relative path to the location of the configuration file
+    required: true
+  zendesk_domain:
+    description: >
+      The Domain for the Zendesk Help Center that will be used to publish the content
+    required: true
+  zendesk_admin_email:
+    description: >
+      The Help Center Admin's email that will be used to publish the changes.
+    required: true
+env:
+  NODE_ENV: production
