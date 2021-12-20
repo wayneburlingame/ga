@@ -1,0 +1,29 @@
+{
+  "name": "zendeskdev-docs",
+  "version": "0.1.0",
+  "description": "Automatically publishes entries on your merges to master",
+  "main": "action.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zendesk/ga.git"
+  },
+  "author": "One Graph",
+  "license": "private",
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/zendesk/ga/issues"
+  },
+  "homepage": "https://github.com/zendesk/ga/blob/master/zendeskdev-dcos/readme",
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/http-client": "^1.0.11",
+    "js-yaml": "^4.1.0",
+    "showdown": "^1.9.1"
+  },
+  "devDependencies": {
+    "nock": "^13.2.1"
+  }
+}
