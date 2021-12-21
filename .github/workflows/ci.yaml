@@ -1,0 +1,15 @@
+name: CI
+on:
+  push:
+    branches:
+      - "**"
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: zendesk/checkout@v2
+
+      - name: Run zendesk-docs tests
+        working-directory: ./zendesk-docs
+        run: node  __tests__/action.test.js
