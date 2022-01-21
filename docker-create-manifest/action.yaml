@@ -1,0 +1,52 @@
+name: Create Multiarch Manifest
+description: Creates and pushes manifest out of multiarch images that are tagged with `*-<arch>` tags.
+author: Engineering Productivity Team
+inputs:
+  image-name:
+    description: Image name without tag to use when building and pushing the image. Defaults to env IMAGE_NAME
+    required: false
+    default: ""
+  target-tags:
+    description: Space separated list of tags to use for the resulting manifest to add to the implict tags. Defaults to commit sha and branch name.
+    required: false
+    default: ""
+  architectures:
+    description: List of architectures for source images
+    required: false
+    default: "amd64 arm64"
+runs:
+  using: composite
+  steps:
+    - name: Create and push manifest
+      shell: bash
+      run: |
+        set -e
+
+        function create_manifest() {
+          TARGET_IMAGE=$1
+          echo "Target image: $TARGET_IMAGE"
+
+          SOURCE_TAG_PREFIX=${{ github.sha }}
+          SOURCE_IMAGES=""
+          for ARCH in ${{ inputs.architectures }}; do
+            ARCH_SOURCE_IMAGE=$IMAGE_NAME:$SOURCE_TAG_PREFIX-$ARCH
+            SOURCE_IMAGES="$SOURCE_IMAGES $ARCH_SOURCE_IMAGE"
+          done
+
+          docker manifest create $TARGET_IMAGE $SOURCE_IMAGES && docker manifest push $TARGET_IMAGE
+        }
+
+        IMAGE_NAME=${{ inputs.image-name == '' && env.IMAGE_NAME || inputs.image-name }}
+        if [ -z "$IMAGE_NAME" ]; then
+          echo ::error title=Missing image name::Set image-name parameter or IMAGE_NAME env
+          exit 1
+        fi
+
+        TARGET_TAGS="${{ inputs.target-tags }}"
+        if [ -z "$TARGET_TAGS" ]; then
+          TARGET_TAGS="${{ github.sha }} ${{ github.ref_name }}"
+        fi
+
+        for TARGET_TAG in $TARGET_TAGS; do
+          create_manifest $IMAGE_NAME:$( echo -n $TARGET_TAG | tr -C "[:alnum:].-" "-" )
+        done

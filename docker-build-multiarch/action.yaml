@@ -1,0 +1,66 @@
+name: Build Docker Image
+description: Builds Docker image using Buildx. Opinionated to tag the image with suffix `-<arch>` based on the arch.
+author: Engineering Productivity Team
+inputs:
+  architecture:
+    description: Linux architecture to build for. E.g. `amd64` or `arm64`
+    required: true
+  image-name:
+    description: Image name without tag to use when building and pushing the image. Defaults to env IMAGE_NAME
+    required: false
+    default: ""
+  docker-args:
+    description: Optional docker build arguments like --build-arg, --cache-from, ...
+    required: false
+    default: ""
+  dockerfile:
+    description: Dockerfile to use
+    required: false
+    default: "Dockerfile"
+  push:
+    description: Whether to perform push of the built image
+    required: false
+    default: "true"
+  add-revision-label:
+    description: Whether to add revision label to the resulting image
+    required: false
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - name: Initialize docker buildx
+      shell: bash
+      run: |
+        # install ARM64 support
+        docker run --privileged --rm tonistiigi/binfmt --install arm64 && docker run --privileged --rm tonistiigi/binfmt
+
+        # create builder
+        docker buildx create --name multi-platform-builder --use
+
+        # ensure builder has started
+        docker buildx inspect --bootstrap
+
+    - name: Build the image
+      shell: bash
+      run: |
+        IMAGE_NAME=${{ inputs.image-name == '' && env.IMAGE_NAME || inputs.image-name }}
+        if [ -z "$IMAGE_NAME" ]; then
+          echo ::error title=Missing image name::Set image-name parameter or IMAGE_NAME env
+          exit 1
+        fi
+
+        IMAGE_TAG=${{ github.sha }}-${{ inputs.architecture }}
+        FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_TAG
+
+        REVISION_LABEL_ARG=${{ inputs.add-revision-label == 'true' && format('--label=revision={0}', github.sha) || '' }}
+        PUSH_ARG=${{ inputs.push == 'true' && '--push' || '' }}
+
+        docker buildx build \
+          --builder multi-platform-builder \
+          --platform linux/${{ inputs.architecture }} \
+          --tag="$FULL_IMAGE_NAME" \
+          --file=${{ inputs.dockerfile }} \
+          $PUSH_ARG \
+          $REVISION_LABEL_ARG \
+          ${{ inputs.docker-args }} \
+          . 
