@@ -2,6 +2,10 @@ name: Build Docker Image
 description: Builds Docker image using Buildx. Opinionated to tag the image with suffix `-<arch>` based on the arch.
 author: Engineering Productivity Team
 inputs:
+  working-directory:
+    description: Path of directory inside the workspace from where the docker build will be run
+    required: false
+    default: "."
   architecture:
     description: Linux architecture to build for. E.g. `amd64` or `arm64`
     required: true
@@ -30,6 +34,7 @@ runs:
   steps:
     - name: Initialize docker buildx
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: |
         # install ARM64 support
         docker run --privileged --rm tonistiigi/binfmt --install arm64 && docker run --privileged --rm tonistiigi/binfmt
@@ -42,6 +47,7 @@ runs:
 
     - name: Build the image
       shell: bash
+      working-directory: ${{ inputs.working-directory }}
       run: |
         IMAGE_NAME=${{ inputs.image-name == '' && env.IMAGE_NAME || inputs.image-name }}
         if [ -z "$IMAGE_NAME" ]; then
@@ -56,11 +62,11 @@ runs:
         PUSH_ARG=${{ inputs.push == 'true' && '--push' || '' }}
 
         docker buildx build \
+          . \
           --builder multi-platform-builder \
           --platform linux/${{ inputs.architecture }} \
           --tag="$FULL_IMAGE_NAME" \
           --file=${{ inputs.dockerfile }} \
           $PUSH_ARG \
           $REVISION_LABEL_ARG \
-          ${{ inputs.docker-args }} \
-          . 
+          ${{ inputs.docker-args }}

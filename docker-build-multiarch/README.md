@@ -22,6 +22,7 @@ may also use own host runner, this will allow to use it.
 | Parameter | | Description |
 |--|--|--|
 | `architecture` | required | Architecture to build image for without the os prefix (only linux). E.g. `amd64`, `arm64` |
+| `working-directory` | optiona, default `.` | Build in different working directory than the root of the repository |
 | `image-name` | optional, default `env.IMAGE_NAME` | The full name of the image without tag. |
 | `docker-args` | optional, default: `''` | additional arguments to the docker build command. Can be used to add `--build-args`, `--cache-from`, etc. Note that `buildx` automatically pull images when using `--cache-from`. |
 | `push` | optional, default: `true` | whether to push the build images or not. Accepts string of `"true"` or `"false"`. |
