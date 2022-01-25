@@ -29,7 +29,7 @@ ${ input.image-name }:${ github.sha }-arm64
 
 | Parameter | | Description |
 |--|--|--|
-| `image-name` | optional, default `env.IMAGE_NAME` | The full name of the image without tag. |
+| `image-name` | optional, default `env.IMAGE_NAME` | The full name of the image without tag. It can be also list of images separated by space. In that case it behaves like the same action is run multiple times for each image with the same target tags. |
 | `target-tags` | optional, default: `github.sha github.ref_name` | Space separated list of tags to create the manifest with. Tags are automatically replaced with `-` for any unsupported character. |
 | `architectures` | optional, default: `amd64 arm64` | Space separated list of architectures to infert the list of source images from. Each architecture will be mapped to `${ input.image-name}:${ github.sha }-<arch>` image in the list. |
 

@@ -3,7 +3,7 @@ description: Creates and pushes manifest out of multiarch images that are tagged
 author: Engineering Productivity Team
 inputs:
   image-name:
-    description: Image name without tag to use when building and pushing the image. Defaults to env IMAGE_NAME
+    description: Image name or image names (space separated) without tag to use when building and pushing the image. Defaults to env IMAGE_NAME
     required: false
     default: ""
   target-tags:
@@ -36,17 +36,26 @@ runs:
           docker manifest create $TARGET_IMAGE $SOURCE_IMAGES && docker manifest push $TARGET_IMAGE
         }
 
-        IMAGE_NAME=${{ inputs.image-name == '' && env.IMAGE_NAME || inputs.image-name }}
-        if [ -z "$IMAGE_NAME" ]; then
+        function push_image() {
+          IMAGE_NAME=$1
+
+          TARGET_TAGS="${{ inputs.target-tags }}"
+          if [ -z "$TARGET_TAGS" ]; then
+            TARGET_TAGS="${{ github.sha }} ${{ github.ref_name }}"
+          fi
+
+          for TARGET_TAG in $TARGET_TAGS; do
+            create_manifest $IMAGE_NAME:$( echo -n $TARGET_TAG | tr -C "[:alnum:].-" "-" )
+          done
+        }
+
+        IMAGE_NAMES="${{ inputs.image-name == '' && env.IMAGE_NAME || inputs.image-name }}"
+        if [ -z "$IMAGE_NAMES" ]; then
           echo ::error title=Missing image name::Set image-name parameter or IMAGE_NAME env
           exit 1
         fi
 
-        TARGET_TAGS="${{ inputs.target-tags }}"
-        if [ -z "$TARGET_TAGS" ]; then
-          TARGET_TAGS="${{ github.sha }} ${{ github.ref_name }}"
-        fi
-
-        for TARGET_TAG in $TARGET_TAGS; do
-          create_manifest $IMAGE_NAME:$( echo -n $TARGET_TAG | tr -C "[:alnum:].-" "-" )
+        for IMAGE_NAME in $IMAGE_NAMES; do
+          push_image $IMAGE_NAME
         done
+
