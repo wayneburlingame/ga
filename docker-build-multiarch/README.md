@@ -12,9 +12,9 @@ It builds and pushes image in this format:
 ${ inputs.image-name }:${ github.sha }-${ inputs.architecture }
 ```
 
-Note: This action intentionally allows building only single architecture at the time, even when `buildx` 
+Note: This action intentionally allows building only single architecture at the time, even when `buildx`
 supports parallel building of multiple architectures in one command. This is to prefer to use
-`matrix` strategy to parallelize the builds for each architecture. In the future each architecture 
+`matrix` strategy to parallelize the builds for each architecture. In the future each architecture
 may also use own host runner, this will allow to use it.
 
 ## Parameters
@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: zendesk/checkout@v2
       - name: Build and push image
-        uses: zendesk/ga/docker-build-multiarch
+        uses: zendesk/ga/docker-build-multiarch@v2
         with:
           docker-args: "--build-arg ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }} --build-arg ARTIFACTORY_API_KEY=${{ secrets.ARTIFACTORY_API_KEY }}"
           architecture: ${{ matrix.architecture }}
@@ -92,12 +92,12 @@ jobs:
     steps:
       - uses: zendesk/checkout@v2
       - name: Build production image
-        uses: zendesk/ga/docker-build-multiarch
+        uses: zendesk/ga/docker-build-multiarch@v2
         with:
           docker-args: "--build-arg ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }} --build-arg ARTIFACTORY_API_KEY=${{ secrets.ARTIFACTORY_API_KEY }}"
           architecture: ${{ matrix.architecture }}
       - name: Build console image
-        uses: zendesk/ga/docker-build-multiarch
+        uses: zendesk/ga/docker-build-multiarch@v2
         with:
           docker-args: "--build-arg ARTIFACTORY_USERNAME=${{ secrets.ARTIFACTORY_USERNAME }} --build-arg ARTIFACTORY_API_KEY=${{ secrets.ARTIFACTORY_API_KEY }}"
           architecture: ${{ matrix.architecture }}
@@ -110,16 +110,16 @@ jobs:
     needs: build_image
 
     steps:
-      - uses: zendesk/ga/docker-create-manifest
-      - uses: zendesk/ga/docker-create-manifest
+      - uses: zendesk/ga/docker-create-manifest@v2
+      - uses: zendesk/ga/docker-create-manifest@v2
         if: github.ref_name == 'master'
         with:
           target-tags: "latest production"
 
-      - uses: zendesk/ga/docker-create-manifest
+      - uses: zendesk/ga/docker-create-manifest@v2
         with:
           image-name: gcr.io/my-app-console
-      - uses: zendesk/ga/docker-create-manifest
+      - uses: zendesk/ga/docker-create-manifest@v2
         if: github.ref_name == 'master'
         with:
           image-name: gcr.io/my-app-console
