@@ -37,7 +37,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: |
         # install ARM64 support
-        docker run --privileged --rm docker.pkg.github.com/zendesk/dockerhub-images/tonistiigi/binfmt --install arm64 && docker run --privileged --rm docker.pkg.github.com/zendesk/dockerhub-images/tonistiigi/binfmt
+        docker run --privileged --rm gcr.io/docker-images-180022/dockerhub-mirror/tonistiigi/binfmt --install arm64 && docker run --privileged --rm gcr.io/docker-images-180022/dockerhub-mirror/tonistiigi/binfmt
 
         # create builder
         docker buildx create --name multi-platform-builder --use
