@@ -39,15 +39,9 @@ runs:
         # install ARM64 support
         docker run --privileged --rm gcr.io/docker-images-180022/dockerhub-mirror/tonistiigi/binfmt --install arm64 && docker run --privileged --rm gcr.io/docker-images-180022/dockerhub-mirror/tonistiigi/binfmt
 
-        # create builder
-        docker buildx create --name multi-platform-builder --use
-
-        # ensure builder has started
-        docker buildx inspect --bootstrap
-
-    - name: Build the image
+    - name: Set imaage name
+      id: set-image-name
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
       run: |
         IMAGE_NAME=${{ inputs.image-name == '' && env.IMAGE_NAME || inputs.image-name }}
         if [ -z "$IMAGE_NAME" ]; then
@@ -58,15 +52,24 @@ runs:
         IMAGE_TAG=${{ github.sha }}-${{ inputs.architecture }}
         FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_TAG
 
+        echo "::set-output name=full-image-name::$(FULL_IMAGE_NAME)"
+
+    - name: Build image
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
         REVISION_LABEL_ARG=${{ inputs.add-revision-label == 'true' && format('--label=revision={0}', github.sha) || '' }}
         PUSH_ARG=${{ inputs.push == 'true' && '--push' || '' }}
 
-        docker buildx build \
+        docker build \
           . \
-          --builder multi-platform-builder \
           --platform linux/${{ inputs.architecture }} \
-          --tag="$FULL_IMAGE_NAME" \
+          --tag="${{ steps.set-image-name.outputs.full-image-name }}" \
           --file=${{ inputs.dockerfile }} \
-          $PUSH_ARG \
           $REVISION_LABEL_ARG \
           ${{ inputs.docker-args }}
+
+    - name: Push image
+      shell: bash
+      run: |
+        docker push ${{ steps.set-image-name.outputs.full-image-name }}
