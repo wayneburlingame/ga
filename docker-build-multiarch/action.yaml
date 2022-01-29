@@ -52,7 +52,7 @@ runs:
         IMAGE_TAG=${{ github.sha }}-${{ inputs.architecture }}
         FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_TAG
 
-        echo "::set-output name=full-image-name::$(FULL_IMAGE_NAME)"
+        echo "::set-output name=full-image-name::${FULL_IMAGE_NAME}"
 
     - name: Build image
       shell: bash
