@@ -21,17 +21,18 @@ ${ input.image-name }:custom-tag           # for each tag in target-tags
 referencing this list of images:
 
 ```
-${ input.image-name }:${ github.sha }-amd64
-${ input.image-name }:${ github.sha }-arm64
+${ input.image-name }:${ input.image-tag-identifier }-amd64
+${ input.image-name }:${ input.image-tag-identifier }-arm64
 ```
 
 ## Parameters
 
-| Parameter | | Description |
-|--|--|--|
-| `image-name` | optional, default `env.IMAGE_NAME` | The full name of the image without tag. It can be also list of images separated by space. In that case it behaves like the same action is run multiple times for each image with the same target tags. |
-| `target-tags` | optional, default: `github.sha github.ref_name` | Space separated list of tags to create the manifest with. Tags are automatically replaced with `-` for any unsupported character. |
-| `architectures` | optional, default: `amd64 arm64` | Space separated list of architectures to infert the list of source images from. Each architecture will be mapped to `${ input.image-name}:${ github.sha }-<arch>` image in the list. |
+| Parameter              |                                                 | Description                                                                                                                                                                                            |
+| ---------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `image-name`           | optional, default `env.IMAGE_NAME`              | The full name of the image without tag. It can be also list of images separated by space. In that case it behaves like the same action is run multiple times for each image with the same target tags. |
+| `image-tag-identifier` | optional, default `github.sha`                  | Image tag to identify this build when creating the mutliarch manifest. Use the same value in the docker-build-multiarch action.                                                                        |
+| `target-tags`          | optional, default: `github.sha github.ref_name` | Space separated list of tags to create the manifest with. Tags are automatically replaced with `-` for any unsupported character.                                                                      |
+| `architectures`        | optional, default: `amd64 arm64`                | Space separated list of architectures to infert the list of source images from. Each architecture will be mapped to `${ input.image-name}:${ github.sha }-<arch>` image in the list.                   |
 
 ## Examples
 

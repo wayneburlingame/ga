@@ -9,7 +9,7 @@ action.
 It builds and pushes image in this format:
 
 ```
-${ inputs.image-name }:${ github.sha }-${ inputs.architecture }
+${ inputs.image-name }:${ inputs.image-tag-identifier }-${ inputs.architecture }
 ```
 
 Note: This action intentionally allows building only single architecture at the time, even when `buildx` 
@@ -19,15 +19,16 @@ may also use own host runner, this will allow to use it.
 
 ## Parameters
 
-| Parameter | | Description |
-|--|--|--|
-| `architecture` | required | Architecture to build image for without the os prefix (only linux). E.g. `amd64`, `arm64` |
-| `working-directory` | optiona, default `.` | Build in different working directory than the root of the repository |
-| `image-name` | optional, default `env.IMAGE_NAME` | The full name of the image without tag. |
-| `docker-args` | optional, default: `''` | additional arguments to the docker build command. Can be used to add `--build-args`, `--cache-from`, etc. Note that `buildx` automatically pull images when using `--cache-from`. |
-| `push` | optional, default: `true` | whether to push the build images or not. Accepts string of `"true"` or `"false"`. |
-| `dockerfile` | optional, default: `Dockerfile` | path to Dockerfile to use |
-| `add-revision-label` | optional, default: `true` | whether to add the revision label with current sha to the image |
+| Parameter              |                                    | Description                                                                                                                                                                       |
+| ---------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture`         | required                           | Architecture to build image for without the os prefix (only linux). E.g. `amd64`, `arm64`                                                                                         |
+| `working-directory`    | optiona, default `.`               | Build in different working directory than the root of the repository                                                                                                              |
+| `image-name`           | optional, default `env.IMAGE_NAME` | The full name of the image without tag.                                                                                                                                           |
+| `image-tag-identifier` | optional, default `github.sha`     | Image tag to identify this build when creating the mutliarch manifest. Use the same value in the docker-create-manifest action.                                                   |
+| `docker-args`          | optional, default: `''`            | Additional arguments to the docker build command. Can be used to add `--build-args`, `--cache-from`, etc. Note that `buildx` automatically pull images when using `--cache-from`. |
+| `push`                 | optional, default: `true`          | Whether to push the build images or not. Accepts string of `"true"` or `"false"`.                                                                                                 |
+| `dockerfile`           | optional, default: `Dockerfile`    | Path to Dockerfile to use                                                                                                                                                         |
+| `add-revision-label`   | optional, default: `true`          | Whether to add the revision label with current sha to the image                                                                                                                   |
 
 ## Basic example
 

@@ -6,6 +6,10 @@ inputs:
     description: Image name or image names (space separated) without tag to use when building and pushing the image. Defaults to env IMAGE_NAME
     required: false
     default: ""
+  image-tag-identifier:
+    description: Image tag to identify the source images. Defaults to github.sha.
+    required: false
+    default: ""
   target-tags:
     description: Space separated list of tags to use for the resulting manifest to add to the implict tags. Defaults to commit sha and branch name.
     required: false
@@ -26,7 +30,7 @@ runs:
           TARGET_IMAGE=$1
           echo "Target image: $TARGET_IMAGE"
 
-          SOURCE_TAG_PREFIX=${{ github.sha }}
+          SOURCE_TAG_PREFIX=${{ inputs.image-tag-identifier == '' && github.sha || inputs.image-tag-identifier }}
           SOURCE_IMAGES=""
           for ARCH in ${{ inputs.architectures }}; do
             ARCH_SOURCE_IMAGE=$IMAGE_NAME:$SOURCE_TAG_PREFIX-$ARCH

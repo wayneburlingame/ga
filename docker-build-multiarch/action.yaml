@@ -13,6 +13,10 @@ inputs:
     description: Image name without tag to use when building and pushing the image. Defaults to env IMAGE_NAME
     required: false
     default: ""
+  image-tag-identifier:
+    description: Image tag to identify this build when creating the mutliarch manifest. Defaults to github.sha.
+    required: false
+    default: ""
   docker-args:
     description: Optional docker build arguments like --build-arg, --cache-from, ...
     required: false
@@ -55,7 +59,8 @@ runs:
           exit 1
         fi
 
-        IMAGE_TAG=${{ github.sha }}-${{ inputs.architecture }}
+        IMAGE_TAG_IDENTIFIER=${{ inputs.image-tag-identifier == '' && github.sha || inputs.image-tag-identifier }}
+        IMAGE_TAG=$IMAGE_TAG_IDENTIFIER-${{ inputs.architecture }}
         FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_TAG
 
         REVISION_LABEL_ARG=${{ inputs.add-revision-label == 'true' && format('--label=revision={0}', github.sha) || '' }}
